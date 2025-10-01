@@ -1,0 +1,120 @@
+-- 🗂️ Product 
+CREATE TABLE IF NOT EXISTS Product (
+    product_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    description TEXT NOT NULL,
+    status INTEGER DEFAULT 1 
+);
+
+-- 🗂️ Vendor 
+CREATE TABLE IF NOT EXISTS Vendor (
+    vendor_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    description TEXT NOT NULL,
+    status INTEGER DEFAULT 1 
+);
+
+-- 👤 Customer 
+CREATE TABLE IF NOT EXISTS Customer (
+    customer_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    first_name  TEXT,
+    middle_name  TEXT,
+    last_name  TEXT,
+    hangul_name  TEXT,
+    sex  TEXT,
+    date_of_birth INTEGER,
+    credit_card INTEGER,
+    credit_card_date INTEGER 
+);
+
+-- ✈️ Flight 
+CREATE TABLE IF NOT EXISTS Flight (
+    flight_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    description TEXT NOT NULL,
+    status INTEGER DEFAULT 1 
+);
+
+-- 🚐 Pickup 
+CREATE TABLE IF NOT EXISTS Pickup (
+    pickup_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    description TEXT NOT NULL,
+    status INTEGER DEFAULT 1 
+);
+
+-- 🧳 Travel
+CREATE TABLE IF NOT EXISTS Travel (
+    travel_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    product_id INTEGER,
+    vendor_id INTEGER,
+    customer_id INTEGER,
+    pickup_id INTEGER,
+    pickup_time TEXT
+    confirmation_code TEXT,
+    airfair_IB TEXT,
+    airfair_OB TEXT,
+    time_IB TEXT,
+    time_OB TEXT,
+    deposite INTEGER DEFAULT 0,
+    payment INTEGER DEFAULT 0,
+    event_expense INTEGER DEFAULT 0,
+    special_request TEXT,
+    FOREIGN KEY (product_id) REFERENCES Product(product_id),
+    FOREIGN KEY (vendor_id) REFERENCES Vendor(vendor_id),
+    FOREIGN KEY (customer_id) REFERENCES Customer(customer_id),
+    FOREIGN KEY (pickup_id) REFERENCES Pickup(pickup_id)
+);
+
+-- 📜 Travel History 
+CREATE TABLE IF NOT EXISTS  Travel_History (
+    travel_id INTEGER,
+    deposite INTEGER,
+    payment INTEGER,
+    event_expense INTEGER,
+    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+); 
+
+
+CREATE TRIGGER IF NOT EXISTS log_travel_insert
+AFTER INSERT ON Travel
+FOR EACH ROW
+BEGIN
+    INSERT INTO Travel_History (travel_id, deposite, payment, event_expense, timestamp)
+    VALUES (NEW.travel_id, NEW.deposite, NEW.payment, NEW.event_expense, CURRENT_TIMESTAMP);
+END;
+
+
+CREATE TRIGGER IF NOT EXISTS log_travel_update
+AFTER UPDATE ON Travel
+FOR EACH ROW
+BEGIN
+    INSERT INTO Travel_History (travel_id, deposite, payment, event_expense, timestamp)
+    VALUES (NEW.travel_id, NEW.deposite, NEW.payment, NEW.event_expense, CURRENT_TIMESTAMP);
+END;
+
+CREATE INDEX IF NOT EXISTS idx_travel_history_timestamp
+ON Travel_History(timestamp);
+------------------------------------------
+
+-- 🗂️ Product 
+INSERT INTO Product (description) VALUES
+('KOA - 알로하와이'),
+('오아후 - VIP 단독행사');
+
+-- 🗂️ Vendor 
+INSERT INTO Vendor (description) VALUES
+('BADA'),
+('ALO');
+
+-- 👤 Customer 
+INSERT INTO Customer (first_name, middle_name, last_name, hangul_name, sex, date_of_birth, credit_card, credit_card_date) VALUES
+('YOUNG SOOK','','SONG','송영석','M','19560602','JB 0861','20250826'),
+('DONG GYU','','LEE','이동규','M','19870202','JB 0861','20250826');
+
+-- ✈️ Flight 
+INSERT INTO Flight (description) VALUES
+('HA158'),
+('WN3093');
+
+-- 🚐 Pickup 
+INSERT INTO Pickup (description) VALUES
+('HGI'),
+('HRW');
+
