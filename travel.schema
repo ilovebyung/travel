@@ -39,14 +39,15 @@ CREATE TABLE IF NOT EXISTS Pickup (
     status INTEGER DEFAULT 1 
 );
 
--- 🧳 Travel
+-- 🧳 Travel	ISO 8601 format ('YYYY-MM-DD HH:MM:SS') 
 CREATE TABLE IF NOT EXISTS Travel (
     travel_id INTEGER PRIMARY KEY AUTOINCREMENT,
     product_id INTEGER,
     vendor_id INTEGER,
     customer_id INTEGER,
+    flight_id INTEGER,
     pickup_id INTEGER,
-    pickup_time TEXT
+    pickup_time TEXT,
     confirmation_code TEXT,
     airfair_IB TEXT,
     airfair_OB TEXT,
@@ -59,7 +60,8 @@ CREATE TABLE IF NOT EXISTS Travel (
     FOREIGN KEY (product_id) REFERENCES Product(product_id),
     FOREIGN KEY (vendor_id) REFERENCES Vendor(vendor_id),
     FOREIGN KEY (customer_id) REFERENCES Customer(customer_id),
-    FOREIGN KEY (pickup_id) REFERENCES Pickup(pickup_id)
+    FOREIGN KEY (pickup_id) REFERENCES Pickup(pickup_id),
+    FOREIGN KEY (flight_id) REFERENCES Flight(flight_id)
 );
 
 -- 📜 Travel History 
@@ -91,6 +93,7 @@ END;
 
 CREATE INDEX IF NOT EXISTS idx_travel_history_timestamp
 ON Travel_History(timestamp);
+
 ------------------------------------------
 
 -- 🗂️ Product 
@@ -117,4 +120,3 @@ INSERT INTO Flight (description) VALUES
 INSERT INTO Pickup (description) VALUES
 ('HGI'),
 ('HRW');
-
