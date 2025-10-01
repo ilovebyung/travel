@@ -63,6 +63,7 @@ l10n/
 # development 
 sandbox.py
 sandbox/**
+*.schema
 *.db 
 *.sqlite
 *.db-shm
