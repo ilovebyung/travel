@@ -63,8 +63,6 @@ l10n/
 # development 
 sandbox.py
 sandbox/**
-split.py
-travel.db
 *.db 
 *.sqlite
 *.db-shm

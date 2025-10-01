@@ -1,14 +1,12 @@
 -- 🗂️ Product 
 CREATE TABLE IF NOT EXISTS Product (
-    product_id INTEGER PRIMARY KEY AUTOINCREMENT,
-    description TEXT NOT NULL,
+    Product TEXT NOT NULL,
     status INTEGER DEFAULT 1 
 );
 
 -- 🗂️ Vendor 
 CREATE TABLE IF NOT EXISTS Vendor (
-    vendor_id INTEGER PRIMARY KEY AUTOINCREMENT,
-    description TEXT NOT NULL,
+    Vendor TEXT NOT NULL,
     status INTEGER DEFAULT 1 
 );
 
@@ -27,41 +25,39 @@ CREATE TABLE IF NOT EXISTS Customer (
 
 -- ✈️ Flight 
 CREATE TABLE IF NOT EXISTS Flight (
-    flight_id INTEGER PRIMARY KEY AUTOINCREMENT,
-    description TEXT NOT NULL,
+    Flight TEXT NOT NULL,
     status INTEGER DEFAULT 1 
 );
 
 -- 🚐 Pickup 
 CREATE TABLE IF NOT EXISTS Pickup (
-    pickup_id INTEGER PRIMARY KEY AUTOINCREMENT,
-    description TEXT NOT NULL,
+    Pickup TEXT NOT NULL,
     status INTEGER DEFAULT 1 
 );
 
--- 🧳 Travel	ISO 8601 format ('YYYY-MM-DD HH:MM:SS') 
+-- 🧳 Travel	
 CREATE TABLE IF NOT EXISTS Travel (
     travel_id INTEGER PRIMARY KEY AUTOINCREMENT,
-    product_id INTEGER,
-    vendor_id INTEGER,
-    customer_id INTEGER,
-    flight_id INTEGER,
-    pickup_id INTEGER,
-    pickup_time TEXT,
+    Product TEXT,
+    Vendor TEXT,
+    Customer TEXT,
+    Flight TEXT,
+    Pickup TEXT,
+    pickup_time TEXT,	--ISO 8601 format ('YYYY-MM-DD HH:MM:SS') 
     confirmation_code TEXT,
     airfair_IB TEXT,
     airfair_OB TEXT,
-    time_IB TEXT,
-    time_OB TEXT,
+    time_IB TEXT,	--ISO 8601 format ('YYYY-MM-DD HH:MM:SS') 
+    time_OB TEXT,	--ISO 8601 format ('YYYY-MM-DD HH:MM:SS') 
     deposite INTEGER DEFAULT 0,
     payment INTEGER DEFAULT 0,
     event_expense INTEGER DEFAULT 0,
     special_request TEXT,
-    FOREIGN KEY (product_id) REFERENCES Product(product_id),
-    FOREIGN KEY (vendor_id) REFERENCES Vendor(vendor_id),
-    FOREIGN KEY (customer_id) REFERENCES Customer(customer_id),
-    FOREIGN KEY (pickup_id) REFERENCES Pickup(pickup_id),
-    FOREIGN KEY (flight_id) REFERENCES Flight(flight_id)
+    FOREIGN KEY (Product) REFERENCES Product(Product),
+    FOREIGN KEY (Vendor) REFERENCES Vendor(Vendor),
+    FOREIGN KEY (Customer) REFERENCES Customer(Customer),
+    FOREIGN KEY (Flight) REFERENCES Flight(Flight),
+    FOREIGN KEY (Pickup) REFERENCES Pickup(Pickup)
 );
 
 -- 📜 Travel History 
@@ -97,12 +93,12 @@ ON Travel_History(timestamp);
 ------------------------------------------
 
 -- 🗂️ Product 
-INSERT INTO Product (description) VALUES
+INSERT INTO Product (Product) VALUES
 ('KOA - 알로하와이'),
 ('오아후 - VIP 단독행사');
 
 -- 🗂️ Vendor 
-INSERT INTO Vendor (description) VALUES
+INSERT INTO Vendor (Vendor) VALUES
 ('BADA'),
 ('ALO');
 
@@ -112,11 +108,11 @@ INSERT INTO Customer (first_name, middle_name, last_name, hangul_name, sex, date
 ('DONG GYU','','LEE','이동규','M','19870202','JB 0861','20250826');
 
 -- ✈️ Flight 
-INSERT INTO Flight (description) VALUES
+INSERT INTO Flight (Flight) VALUES
 ('HA158'),
 ('WN3093');
 
 -- 🚐 Pickup 
-INSERT INTO Pickup (description) VALUES
+INSERT INTO Pickup (Pickup) VALUES
 ('HGI'),
 ('HRW');
