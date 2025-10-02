@@ -121,7 +121,7 @@ def get_all_customers():
                 # Rename columns for user interface
                 df = df.rename(columns={
                     'first_name': 'First Name', 'middle_name': 'Middle Name', 'last_name': 'Last Name',
-                    'hangul_name': 'Hangul Name', 'sex': 'Gender', 
+                    'hangul_name': 'Hangul Name', 'sex':'Gender',
                     'date_of_birth': 'Date of Birth', 'credit_card': 'Credit Card', 
                     'credit_card_date': 'CC Exp Date'
                 })
@@ -269,7 +269,7 @@ def manage_table(table_name, icon):
                     
 def manage_customer_dashboard():
     """Renders the UI for managing the Customer table."""
-    st.header("👤 Manage Customer", divider='blue')
+    st.header("👤 Manage Customers", divider='blue')
 
     # --- 1. Add New Customer Form ---
     with st.expander("➕ Register New Customer", expanded=True):
@@ -394,7 +394,7 @@ def manage_travel_dashboard():
             with col_pu_date:
                 pickup_date = st.date_input("Pickup Date", value=None)
             with col_pu_time:
-                pickup_time = st.time_input("Pickup Time", value=None)
+                pickup_time = st.time_input("Pickup Time", value=None, step=600)
 
             st.markdown("---")
             st.subheader("Financials & Airfare")
@@ -407,11 +407,11 @@ def manage_travel_dashboard():
 
             col_deposite, col_payment, col_expense = st.columns(3)
             with col_deposite:
-                deposite = st.number_input("Deposit (\$) (Default 0)", min_value=0, value=0, step=10)
+                deposite = st.number_input("Deposit (\\$) (Default 0)", min_value=0, value=0, step=10)
             with col_payment:
-                payment = st.number_input("Payment (\$) (Default 0)", min_value=0, value=0, step=10)
+                payment = st.number_input("Payment (\\$) (Default 0)", min_value=0, value=0, step=10)
             with col_expense:
-                event_expense = st.number_input("Event Expense (\$) (Default 0)", min_value=0, value=0, step=10)
+                event_expense = st.number_input("Event Expense (\\$) (Default 0)", min_value=0, value=0, step=10)
                 
             submit_button = st.form_submit_button(label='Save Travel Entry')
             
@@ -475,12 +475,8 @@ def main():
         layout="wide"
     )
 
-    # st.title("🧳 Travel Management Dashboard")
-    # st.caption("SQLite Backend: `travel.database`")
-
     # 1. Initialize Database and Tables  
-    # init_db()
-    
+    # init_db() 
     # 2. Define tabs and icons
     tab_names = ["Travel", "Customer"] + GENERIC_TABLES
     tab_icons = {
