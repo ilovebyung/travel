@@ -350,21 +350,20 @@ def manage_travel_dashboard():
         with st.form(key='add_travel_form'):
             
             st.subheader("Core Booking Details")
-            col1, col2 = st.columns(2)
+            col1, col2, col3, col4 = st.columns(4)
             with col1:
                 confirmation_code = st.text_input("Confirmation Code *", max_chars=50)
             with col2:
                 # Use customer name as the link value
                 selected_customer = st.selectbox("Customer *", options=customer_options)
-
-            col3, col4, col5 = st.columns(3)
             with col3:
                 selected_product = st.selectbox("Product", options=product_options)
             with col4:
                 selected_vendor = st.selectbox("Vendor", options=vendor_options)
-            with col5:
+            # with col5:
                 # Add special request text area
-                special_request = st.text_area("Special Request", max_chars=500)
+                # special_request = st.text_area("Special Request", max_chars=500)
+                special_request = ''
 
             st.markdown("---")
             st.subheader("Flight & Pickup Details")
@@ -399,13 +398,13 @@ def manage_travel_dashboard():
             st.markdown("---")
             st.subheader("Financials & Airfare")
             
-            col_fair_ib, col_fair_ob = st.columns(2)
+            col_fair_ib, col_fair_ob, col_deposite, col_payment, col_expense = st.columns(5)
             with col_fair_ib:
                 airfair_IB = st.text_input("Airfare (Inbound)")
             with col_fair_ob:
                 airfair_OB = st.text_input("Airfare (Outbound)")
 
-            col_deposite, col_payment, col_expense = st.columns(3)
+            # col_deposite, col_payment, col_expense = st.columns(3)
             with col_deposite:
                 deposite = st.number_input("Deposit (\\$) (Default 0)", min_value=0, value=0, step=10)
             with col_payment:
