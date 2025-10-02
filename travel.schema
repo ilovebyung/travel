@@ -19,8 +19,8 @@ CREATE TABLE IF NOT EXISTS Customer (
     hangul_name  TEXT,
     sex  TEXT,
     date_of_birth TEXT,
-    credit_card INTEGER,
-    credit_card_date INTEGER,
+    credit_card TEXT,
+    credit_card_date TEXT,
     status INTEGER DEFAULT 1 
 );
 

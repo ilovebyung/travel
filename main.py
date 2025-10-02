@@ -211,23 +211,30 @@ def manage_table(table_name, icon):
     st.subheader(f"Current {table_name} List")
 
     # --- 2. View All Items ---
+    # The dataframe from the database includes 'Name' and 'status_code' (0 or 1)
     df = get_all_items(table_name)
 
     if df.empty:
         st.info(f"No {table_name}s found in the database yet. Add one above!")
     else:
         # Prepare data for display and editing
-        df_display = df[['Name', 'Status']].copy()
-        df_display['Action'] = False # Placeholder for a toggle/button
-
+        # Crucially, the 'Action' column's default value must reflect the current state.
+        # We want: If status_code is 1 (Active), the checkbox is UNCHECKED (False).
+        #          If status_code is 0 (Inactive), the checkbox is CHECKED (True).
+        # This matches the help text: "Check to Deactivate (0), uncheck to Activate (1)."
+        df_display = df[['Name', 'Status', 'status_code']].copy()
+        
+        # New column for the checkbox state: True if 'Inactive' (status_code 0), False if 'Active' (status_code 1)
+        df_display['Toggle Status'] = df_display['status_code'].apply(lambda x: x == 0) 
+        
         # Display the data editor
-        edited_df = st.dataframe(
-            df_display,
+        edited_df = st.data_editor( # Changed to st.data_editor for better clarity and features
+            df_display[['Name', 'Status', 'Toggle Status']], # Only display the columns we need
             key=f'editor_{table_name}',
             column_config={
                 "Name": st.column_config.TextColumn("Name", disabled=True),
                 "Status": st.column_config.TextColumn("Status", disabled=True),
-                "Action": st.column_config.CheckboxColumn(
+                "Toggle Status": st.column_config.CheckboxColumn(
                     "Toggle Status",
                     help="Check to **Deactivate**, uncheck to **Activate**.",
                     default=False,
@@ -238,35 +245,48 @@ def manage_table(table_name, icon):
             width='stretch'
         )
 
-        # --- 3. Status Update Logic ---
-        # Check if the 'Action' column (the toggle checkbox) was modified
+        # --- 3. Status Update Logic (FIXED) ---
+        # Check if the 'Toggle Status' column was modified in the session state
         if st.session_state.get(f'editor_{table_name}', {}).get('edited_rows'):
             
             edited_rows = st.session_state[f'editor_{table_name}']['edited_rows']
 
             # Find the row(s) that were modified
             for index, edits in edited_rows.items():
-                if 'Action' in edits:
-                    item_name = df.iloc[index]['Name']
+                if 'Toggle Status' in edits: # Check if the specific checkbox was edited
+                    item_name = df.iloc[index]['Name'] # Get the original item name from the unmodified df
+
+                    # The edited value is the new state of the checkbox
+                    is_checked = edits['Toggle Status'] 
                     
-                    # Explicitly cast the status code to an integer to resolve the TypeError.
-                    try:
-                        current_status_code = int(df.iloc[index]['status_code'])
-                    except (TypeError, ValueError):
-                        # Safely default to 1 (Active) if conversion fails
-                        st.error(f"Error: Could not determine status for '{item_name}'. Defaulting to Active (1).")
-                        current_status_code = 1 
+                    # Determine the new status based on the checkbox's state and its defined meaning:
+                    # Help: "Check to Deactivate (0), uncheck to Activate (1)."
+                    if is_checked:
+                        new_status = 0 # Checkbox is TRUE -> Status becomes INACTIVE (0)
+                        toast_message = f"Deactivating **{item_name}**..."
+                    else:
+                        new_status = 1 # Checkbox is FALSE -> Status becomes ACTIVE (1)
+                        toast_message = f"Activating **{item_name}**..."
                     
-                    # New status is the opposite of the current status code (1 -> 0, 0 -> 1)
-                    new_status = 1 - current_status_code 
-                    
-                    st.toast(f"Processing status change for {item_name}...", icon="🔄")
-                    update_item_status(table_name, item_name, new_status)
-                    
-                    # Clear the edited state and rerun to reflect changes
-                    del st.session_state[f'editor_{table_name}']
-                    st.rerun()
-                    
+                    # Prevent unnecessary DB updates if the status didn't actually change
+                    current_status = df.iloc[index]['status_code']
+                    if current_status != new_status:
+                        st.toast(toast_message, icon="🔄")
+                        update_item_status(table_name, item_name, new_status)
+                        
+                        # Clear the edited state and rerun to reflect changes
+                        # This is crucial for a single-toggle experience
+                        if f'editor_{table_name}' in st.session_state:
+                             del st.session_state[f'editor_{table_name}']
+                        st.rerun()
+                    else:
+                        # Clear the edited state if no change was made, to prevent continuous reruns
+                        if f'editor_{table_name}' in st.session_state:
+                             del st.session_state[f'editor_{table_name}']
+
+
+# ... (rest of the code remains the same)
+
 def manage_customer_dashboard():
     """Renders the UI for managing the Customer table."""
     st.header("👤 Manage Customers", divider='blue')
