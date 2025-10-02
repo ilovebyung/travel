@@ -221,7 +221,7 @@ def manage_table(table_name, icon):
         df_display['Action'] = False # Placeholder for a toggle/button
 
         # Display the data editor
-        edited_df = st.data_editor(
+        edited_df = st.dataframe(
             df_display,
             key=f'editor_{table_name}',
             column_config={
@@ -329,7 +329,7 @@ def manage_customer_dashboard():
         st.info("No customers registered yet.")
     else:
         # Display customers in a static dataframe
-        st.data_editor(df_customers, width='stretch')
+        st.dataframe(df_customers, width='stretch')
 
 
 def manage_travel_dashboard():
@@ -459,7 +459,7 @@ def manage_travel_dashboard():
         st.info("No travel entries registered yet.")
     else:
         # Display travel entries
-        st.data_editor(df_travels, width='stretch')
+        st.dataframe(df_travels, width='stretch')
 
 
 # --- Main Application ---
