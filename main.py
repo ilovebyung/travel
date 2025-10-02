@@ -462,7 +462,7 @@ def manage_travel_dashboard():
         st.info("No travel entries registered yet.")
     else:
         # Display travel entries
-        st.dataframe(df_travels, width='stretch')
+        st.data_editor(df_travels, width='stretch')
 
 
 # --- Main Application ---
