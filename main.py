@@ -331,7 +331,7 @@ def manage_customer_dashboard():
         st.info("No customers registered yet.")
     else:
         # Display customers in a static dataframe
-        st.dataframe(df_customers, width='stretch')
+        st.data_editor(df_customers, width='stretch')
 
 
 def manage_travel_dashboard():
@@ -457,6 +457,7 @@ def manage_travel_dashboard():
 
     # --- 2. View All Travel Entries ---
     df_travels = get_all_travels()
+    df_travels = df_travels[1:] # Hide the travel_id column
 
     if df_travels.empty:
         st.info("No travel entries registered yet.")
