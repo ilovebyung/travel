@@ -102,3 +102,38 @@ def init_db():
     except Exception as e:
         st.error(f"Failed to create Travel table. Error: {e}")
 
+
+def remove_duplicates(db_path, table_name, columns):
+    """
+    Removes duplicate rows from a SQLite table based on specified columns.
+
+    Parameters:
+    - db_path: path to the SQLite database file
+    - table_name: name of the table to clean
+    - columns: list of column names to check for duplicates
+    """
+    conn = sqlite3.connect(DATABASE_FILE)
+    cursor = conn.cursor()
+
+    # Build the GROUP BY clause
+    group_by_clause = ", ".join(columns)
+
+    # Construct and execute the DELETE query
+    query = f"""
+    DELETE FROM {table_name}
+    WHERE rowid NOT IN (
+        SELECT MIN(rowid)
+        FROM {table_name}
+        GROUP BY {group_by_clause}
+    );
+    """
+    cursor.execute(query)
+    conn.commit()
+    conn.close()
+
+
+if __name__ == "__main__":
+    db_path = "/home/byungsoo/Documents/travel/utils/travel.database"
+    table_name = "Customer"
+    columns = ["first_name", "last_name", "hangul_name"]
+    remove_duplicates(DATABASE_FILE, table_name, columns)

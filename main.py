@@ -23,7 +23,7 @@ def get_customer_names_for_lookup():
     """Fetches list of customer names (First Name + Last Name) for dropdowns."""
     try:
         with get_db_connection() as conn:
-            cursor = conn.execute("SELECT first_name, last_name FROM Customer ORDER BY last_name, first_name ASC")
+            cursor = conn.execute("SELECT first_name, last_name FROM Customer ORDER BY customer_id ASC")
             # Create "First Name Last Name" string for dropdown display and storage in Travel table
             names = [f"{row['first_name']} {row['last_name']}" for row in cursor.fetchall()]
             return ["Select..."] + names
@@ -276,20 +276,18 @@ def manage_customer_dashboard():
         with st.form(key='add_customer_form'):
             
             # --- Customer Details ---
-            col1, col2, col3 = st.columns(3)
+            col1, col2, col3, col4, col5, col6 = st.columns(6)
             with col1:
                 first_name = st.text_input("First Name *", max_chars=50)
             with col2:
                 middle_name = st.text_input("Middle Name", max_chars=50)
             with col3:
                 last_name = st.text_input("Last Name *", max_chars=50)
-                
-            hangul_name = st.text_input("Hangul Name (Korean Name)", max_chars=50)
-            
-            col4, col5 = st.columns(2)
-            with col4:
-                sex = st.selectbox("Gender *", options=["Select...", "Male", "Female", "Other"])
+            with col4:               
+                hangul_name = st.text_input("Hangul Name (Korean Name)", max_chars=50)
             with col5:
+                sex = st.selectbox("Gender *", options=["Select...", "Male", "Female", "Other"])
+            with col6:
                 # Use a date input and store as ISO string
                 dob = st.date_input("Date of Birth *", min_value=pd.to_datetime('1900-01-01').date())
 
@@ -349,7 +347,7 @@ def manage_travel_dashboard():
     with st.expander("➕ Add New Travel Entry", expanded=True):
         with st.form(key='add_travel_form'):
             
-            st.subheader("Core Booking Details")
+            st.subheader("Booking Details")
             col1, col2, col3, col4 = st.columns(4)
             with col1:
                 confirmation_code = st.text_input("Confirmation Code *", max_chars=50)
@@ -370,20 +368,19 @@ def manage_travel_dashboard():
             
             # Flight Times
             st.caption("Flight Times (Optional)")
-            col_ib_date, col_ib_time = st.columns(2)
+            col_flight, col_ib_date, col_ib_time, col_ob_date, col_ob_time = st.columns(5)
+
+            with col_flight:
+                selected_flight = st.selectbox("Flight Name", options=flight_options)          
             with col_ib_date:
                 ib_date = st.date_input("Inbound Date", value=None)
             with col_ib_time:
                 ib_time = st.time_input("Inbound Time", value=None)
-
-            col_ob_date, col_ob_time = st.columns(2)
             with col_ob_date:
                 ob_date = st.date_input("Outbound Date", value=None)
             with col_ob_time:
                 ob_time = st.time_input("Outbound Time", value=None)
             
-            selected_flight = st.selectbox("Flight Name", options=flight_options)
-
             # Pickup Details
             st.markdown("---")
             st.caption("Pickup Details (Optional)")

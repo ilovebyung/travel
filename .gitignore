@@ -68,3 +68,6 @@ sandbox/**
 *.sqlite
 *.db-shm
 *.db-wal
+*.database-shm
+*.database-wal
+
