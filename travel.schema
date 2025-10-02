@@ -20,7 +20,8 @@ CREATE TABLE IF NOT EXISTS Customer (
     sex  TEXT,
     date_of_birth TEXT,
     credit_card INTEGER,
-    credit_card_date INTEGER 
+    credit_card_date INTEGER,
+    status INTEGER DEFAULT 1 
 );
 
 -- ✈️ Flight 
@@ -45,8 +46,8 @@ CREATE TABLE IF NOT EXISTS Travel (
     Pickup TEXT,
     pickup_time TEXT,	--ISO 8601 format ('YYYY-MM-DD HH:MM:SS') 
     confirmation_code TEXT,
-    airfair_IB TEXT,
-    airfair_OB TEXT,
+    airfair_IB INTEGER DEFAULT 0,
+    airfair_OB INTEGER DEFAULT 0,
     time_IB TEXT,	--ISO 8601 format ('YYYY-MM-DD HH:MM:SS') 
     time_OB TEXT,	--ISO 8601 format ('YYYY-MM-DD HH:MM:SS') 
     deposite INTEGER DEFAULT 0,

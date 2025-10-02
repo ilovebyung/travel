@@ -114,7 +114,7 @@ def get_all_customers():
     try:
         with get_db_connection() as conn:
             # Select all columns
-            cursor = conn.execute(f"SELECT * FROM Customer ORDER BY last_name, first_name ASC")
+            cursor = conn.execute(f"SELECT * FROM Customer ORDER BY customer_id DESC")
             df = pd.DataFrame(cursor.fetchall(), columns=[col[0] for col in cursor.description])
             
             if not df.empty:
@@ -126,16 +126,16 @@ def get_all_customers():
                     'credit_card_date': 'CC Exp Date'
                 })
                 # Drop internal ID column as requested
-                df = df.drop(columns=['customer_id'])
+                # df = df.drop(columns=['customer_id'])
                 
                 # Mask sensitive data (Credit Card)
-                def mask_cc(cc):
-                    cc_str = str(cc).strip()
-                    if len(cc_str) > 4:
-                        return '**** **** **** ' + cc_str[-4:]
-                    return cc_str if cc_str else "N/A"
+                # def mask_cc(cc):
+                #     cc_str = str(cc).strip()
+                #     if len(cc_str) > 4:
+                #         return '**** **** **** ' + cc_str[-4:]
+                #     return cc_str if cc_str else "N/A"
 
-                df['Credit Card'] = df['Credit Card'].apply(mask_cc)
+                # df['Credit Card'] = df['Credit Card'].apply(mask_cc)
                 
             return df
     except sqlite3.OperationalError:
@@ -358,10 +358,6 @@ def manage_travel_dashboard():
                 selected_product = st.selectbox("Product", options=product_options)
             with col4:
                 selected_vendor = st.selectbox("Vendor", options=vendor_options)
-            # with col5:
-                # Add special request text area
-                # special_request = st.text_area("Special Request", max_chars=500)
-                special_request = ''
 
             st.markdown("---")
             st.subheader("Flight & Pickup Details")
@@ -384,13 +380,17 @@ def manage_travel_dashboard():
             # Pickup Details
             st.markdown("---")
             st.caption("Pickup Details (Optional)")
-            col_pu_select, col_pu_date, col_pu_time = st.columns([1, 1, 1])
+            col_pu_select, col_pu_date, col_pu_time, col_special_request = st.columns(4)
             with col_pu_select:
                 selected_pickup = st.selectbox("Pickup Location", options=pickup_options)
             with col_pu_date:
                 pickup_date = st.date_input("Pickup Date", value=None)
             with col_pu_time:
                 pickup_time = st.time_input("Pickup Time", value=None, step=600)
+            with col_special_request:
+                special_request = st.text_area("Special Request", max_chars=200)
+
+
 
             st.markdown("---")
             st.subheader("Financials & Airfare")
