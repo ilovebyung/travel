@@ -2,8 +2,25 @@ import streamlit as st
 import sqlite3
 import pandas as pd
 import datetime
-from utils.database import get_db_connection, DATABASE_FILE, GENERIC_TABLES, ALL_TABLES
+from utils.database import get_db_connection
+from utils.style import load_css
 
+GENERIC_TABLES = ["Product", "Vendor", "Client", "Flight", "Pickup"]
+
+# --- Login Check ---
+# if not st.session_state.get('authentication_status'):
+# # if not st.session_state.get('username') in ['byungsoo','bada','i4u']:
+#     try:
+#         st.warning("Please log in to access the Travel Data Manager.")
+#         st.switch_page("Home.py")
+
+#     except Exception as e:
+#         st.error(e)
+
+# Set page config
+st.set_page_config(page_title="Data Entry", page_icon="⌨️", layout="wide")
+load_css()
+st.header("⌨️ Data Entry", divider='green')
 
 # --- Lookup Data Helpers ---
 
@@ -31,7 +48,7 @@ def get_customer_names_for_lookup():
         return ["Select..."]
 
 
-# --- Generic Table CRUD (Product, Vendor, Flight, Pickup) ---
+# --- Generic Table CRUD (Product, Vendor, Client, Flight, Pickup) ---
 
 def get_all_items(table_name):
     """Fetches all items from a given generic table."""
@@ -155,14 +172,14 @@ def add_travel_entry(data):
             INSERT INTO Travel (
                 Product, Vendor, Customer, Flight, Pickup, pickup_time, 
                 confirmation_code, airfair_IB, airfair_OB, time_IB, time_OB, 
-                deposite, payment, event_expense, special_request
+                deposite, payment, event_expense, note
             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """
             conn.execute(query, (
                 data['Product'], data['Vendor'], data['Customer'], data['Flight'], data['Pickup'],
                 data['pickup_time'], data['confirmation_code'], data['airfair_IB'], data['airfair_OB'],
                 data['time_IB'], data['time_OB'], data['deposite'], data['payment'], 
-                data['event_expense'], data['special_request']
+                data['event_expense'], data['note']
             ))
             conn.commit()
             st.success(f"New travel entry confirmed with code: **{data['confirmation_code']}**")
@@ -400,15 +417,15 @@ def manage_travel_dashboard():
             # Pickup Details
             st.markdown("---")
             st.caption("Pickup Details (Optional)")
-            col_pu_select, col_pu_date, col_pu_time, col_special_request = st.columns(4)
+            col_pu_select, col_pu_date, col_pu_time, col_note = st.columns(4)
             with col_pu_select:
                 selected_pickup = st.selectbox("Pickup Location", options=pickup_options)
             with col_pu_date:
                 pickup_date = st.date_input("Pickup Date", value=None)
             with col_pu_time:
                 pickup_time = st.time_input("Pickup Time", value=None, step=600)
-            with col_special_request:
-                special_request = st.text_area("Special Request", max_chars=200)
+            with col_note:
+                note = st.text_area("note", max_chars=100)
 
 
 
@@ -464,7 +481,7 @@ def manage_travel_dashboard():
                         'deposite': deposite,
                         'payment': payment,
                         'event_expense': event_expense,
-                        'special_request': special_request.strip() or None,
+                        'note': note.strip() or None,
                     }
                     add_travel_entry(travel_data)
                     st.rerun()
@@ -473,7 +490,6 @@ def manage_travel_dashboard():
 
     # --- 2. View All Travel Entries ---
     df_travels = get_all_travels()
-    df_travels = df_travels[1:] # Hide the travel_id column
 
     if df_travels.empty:
         st.info("No travel entries registered yet.")
@@ -492,6 +508,8 @@ def main():
         layout="wide"
     )
 
+    load_css()
+
     # 1. Initialize Database and Tables  
     # init_db() 
     # 2. Define tabs and icons
@@ -501,6 +519,7 @@ def main():
         "Customer": "👤",
         "Product": "🗂️", 
         "Vendor": "💼", 
+        "Client": "🤝",
         "Flight": "✈️", 
         "Pickup": "🚐"
     }
