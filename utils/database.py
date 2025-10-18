@@ -11,10 +11,10 @@ def get_db_connection():
 def get_table_data(table_name):
     try:
         with get_db_connection() as conn:
-            if table_name in ["Travel"]:
+            if table_name in ["Travel", "Customer"]:
                 df = pd.read_sql_query(f"SELECT * FROM {table_name} ORDER BY {table_name}_id ", conn)
             else:
-                df = pd.read_sql_query(f"SELECT * FROM {table_name} WHERE status=1 ORDER BY {table_name}_id ", conn)
+                df = pd.read_sql_query(f"SELECT * FROM {table_name} ", conn)
                 # Reset the index to start from 1
                 df.index = df.index + 1
             return df

@@ -110,7 +110,7 @@ try:
         edited_df = st.data_editor(
             display_df,
             column_config=column_config,
-            use_container_width=True,
+            width='stretch',
             num_rows="dynamic",  # Allow adding/deleting rows
             key="travel_editor",
             hide_index=False

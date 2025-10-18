@@ -56,6 +56,7 @@ CREATE TABLE IF NOT EXISTS Travel (
     travel_id INTEGER PRIMARY KEY AUTOINCREMENT,
     Product TEXT,
     Vendor TEXT,
+    Client TEXT,
     Customer TEXT,
     Flight TEXT,
     Pickup TEXT,
@@ -79,6 +80,7 @@ CREATE TABLE IF NOT EXISTS Travel (
 -- 📜 Travel History 
 CREATE TABLE IF NOT EXISTS  Travel_History (
     travel_id INTEGER,
+    confirmation_code TEXT,
     deposite INTEGER,
     payment INTEGER,
     event_expense INTEGER,
@@ -92,8 +94,8 @@ CREATE TRIGGER IF NOT EXISTS log_travel_insert
 AFTER INSERT ON Travel
 FOR EACH ROW
 BEGIN
-    INSERT INTO Travel_History (travel_id, deposite, payment, event_expense, timestamp)
-    VALUES (NEW.travel_id, NEW.deposite, NEW.payment, NEW.event_expense, CURRENT_TIMESTAMP);
+    INSERT INTO Travel_History (travel_id, confirmation_code, deposite, payment, event_expense, timestamp)
+    VALUES (NEW.travel_id, NEW.confirmation_code, NEW.deposite, NEW.payment, NEW.event_expense, CURRENT_TIMESTAMP);
 END;
 
 
@@ -101,8 +103,8 @@ CREATE TRIGGER IF NOT EXISTS log_travel_update
 AFTER UPDATE ON Travel
 FOR EACH ROW
 BEGIN
-    INSERT INTO Travel_History (travel_id, deposite, payment, event_expense, timestamp)
-    VALUES (NEW.travel_id, NEW.deposite, NEW.payment, NEW.event_expense, CURRENT_TIMESTAMP);
+    INSERT INTO Travel_History (travel_id, confirmation_code, deposite, payment, event_expense, timestamp)
+    VALUES (NEW.travel_id, NEW.confirmation_code, NEW.deposite, NEW.payment, NEW.event_expense, CURRENT_TIMESTAMP);
 END;
 
 CREATE INDEX IF NOT EXISTS idx_travel_history_timestamp

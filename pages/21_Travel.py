@@ -13,19 +13,30 @@ def get_lookup_data(table_name):
     try:
         with get_db_connection() as conn:
             # Only fetch active items (status = 1)
-            cursor = conn.execute(f"SELECT {column_name} FROM {table_name} WHERE status = 1 ORDER BY {column_name} ASC")
+            cursor = conn.execute(f"SELECT {column_name} FROM {table_name} WHERE status = 1 ORDER BY {column_name} ")
             # Prepend a default selection option
             return ["Select..."] + [row[0] for row in cursor.fetchall()]
     except Exception:
         return ["Select..."]
 
-def get_customer_names_for_lookup():
+def get_customer_names():
     """Fetches list of customer names (First Name + Last Name) for dropdowns."""
     try:
         with get_db_connection() as conn:
             cursor = conn.execute("SELECT first_name, last_name FROM Customer WHERE status=1 ORDER BY first_name, last_name")
+            # Access by index instead of by name
+            names = [f"{row[0]} {row[1]}" for row in cursor.fetchall()]
+            return ["Select..."] + names
+    except Exception:
+        return ["Select..."]
+
+def get_representitive_name():
+    """Fetches list of customer names (First Name + Last Name) for dropdowns."""
+    try:
+        with get_db_connection() as conn:
+            cursor = conn.execute("SELECT first_name, last_name FROM Customer WHERE status=1 and is_representative = 1 ORDER BY first_name, last_name")
             # Create "First Name Last Name" string for dropdown display and storage in Travel table
-            names = [f"{row['first_name']} {row['last_name']}" for row in cursor.fetchall()]
+            names = [f"{row[0]} {row[1]}" for row in cursor.fetchall()]
             return ["Select..."] + names
     except Exception:
         return ["Select..."]
@@ -86,10 +97,11 @@ load_css()
 st.header("🧳 Travel Management ", divider='green')
 
 # Fetch lookup data
+representitive_options = get_representitive_name()
 product_options = get_lookup_data("Product")
 vendor_options = get_lookup_data("Vendor")
 client_options = get_lookup_data("Client")
-customer_options = get_customer_names_for_lookup()
+customer_options = get_customer_names()
 flight_options = get_lookup_data("Flight")
 pickup_options = get_lookup_data("Pickup")
 
@@ -100,11 +112,11 @@ with st.expander("➕ Add New Travel Entry", expanded=True):
         st.subheader("Booking Details")
         col0, col1, col2, col3, col4 = st.columns(5)
         with col0:
-            selected_representitive = st.selectbox("Representitive *", options=customer_options)  
+            selected_representitive = st.selectbox("Representitive *", options=representitive_options)
         with col1:
             selected_customer = st.selectbox("Customer *", options=customer_options)               
         with col2:
-            selected_product = st.selectbox("Product *", options=product_options)
+            selected_product = st.selectbox("Product", options=product_options)
         with col3:
             selected_client = st.selectbox("Client", options=client_options)
         with col4:
@@ -166,8 +178,8 @@ with st.expander("➕ Add New Travel Entry", expanded=True):
         
         if submit_button:
             # Validation
-            if not selected_product or selected_customer == "Select...":
-                st.error("Please fill out the Confirmation Code and select a Customer.")
+            if selected_customer == "":
+                st.error("Please fill out a Customer.")
             else:
                 # Format optional datetime fields to ISO 8601
                 time_IB_str = None

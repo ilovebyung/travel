@@ -19,7 +19,7 @@ try:
         display_df = df.copy()
         display_df.index = display_df.index + 1
         
-        st.subheader("Customer Data Editor")
+        # st.subheader("Customer Data Editor")
         st.info("💡 Edit cells directly in the table below. Changes are highlighted. Click 'Save Changes' to commit updates to the database.")
         
         # Configure column settings for data_editor
@@ -58,7 +58,7 @@ try:
         edited_df = st.data_editor(
             display_df,
             column_config=column_config,
-            use_container_width=True,
+            width='stretch',
             num_rows="dynamic",  # Allow adding/deleting rows
             key="customer_editor",
             hide_index=False
