@@ -1,18 +1,21 @@
 -- 🗂️ Product 
 CREATE TABLE IF NOT EXISTS Product (
     Product TEXT NOT NULL,
+    Notes TEXT,
     status INTEGER DEFAULT 1 
 );
 
 -- 🗂️ Vendor 
 CREATE TABLE IF NOT EXISTS Vendor (
     Vendor TEXT NOT NULL,
+    Notes TEXT,
     status INTEGER DEFAULT 1 
 );
 
 -- 🗂️ Client 
 CREATE TABLE IF NOT EXISTS Client (
     Client TEXT NOT NULL,
+    Notes TEXT,
     status INTEGER DEFAULT 1 
 );
 
@@ -27,7 +30,8 @@ CREATE TABLE IF NOT EXISTS Customer (
     date_of_birth TEXT,
     credit_card TEXT,
     credit_card_date TEXT,
-    status INTEGER DEFAULT 1 
+    is_representative INTEGER DEFAULT 0,
+    status INTEGER DEFAULT 1
 );
 
 CREATE INDEX IF NOT EXISTS idx_customer_status
@@ -36,12 +40,14 @@ ON Customer(status);
 -- ✈️ Flight 
 CREATE TABLE IF NOT EXISTS Flight (
     Flight TEXT NOT NULL,
+    Notes TEXT,
     status INTEGER DEFAULT 1 
 );
 
 -- 🚐 Pickup 
 CREATE TABLE IF NOT EXISTS Pickup (
     Pickup TEXT NOT NULL,
+    Notes TEXT,
     status INTEGER DEFAULT 1 
 );
 
@@ -62,7 +68,7 @@ CREATE TABLE IF NOT EXISTS Travel (
     deposite INTEGER DEFAULT 0,
     payment INTEGER DEFAULT 0,
     event_expense INTEGER DEFAULT 0,
-    note TEXT,
+    Notes TEXT,
     FOREIGN KEY (Product) REFERENCES Product(Product),
     FOREIGN KEY (Vendor) REFERENCES Vendor(Vendor),
     FOREIGN KEY (Customer) REFERENCES Customer(Customer),
@@ -114,10 +120,14 @@ INSERT INTO Vendor (Vendor) VALUES
 ('BADA'),
 ('ALO');
 
+-- 🗂️ Client 
+INSERT INTO Client (Client) VALUES
+('I4U');
+
 -- 👤 Customer 
 INSERT INTO Customer (first_name, middle_name, last_name, hangul_name, sex, date_of_birth, credit_card, credit_card_date) VALUES
-('YOUNG SOOK','','SONG','송영석','M','19560602','JB 0861','20250826'),
-('DONG GYU','','LEE','이동규','M','19870202','JB 0861','20250826');
+('YOUNG SOOK','','SONG','송영석','M','1962-10-18','JB 0861','20250826'), 
+('DONG GYU','','LEE','이동규','M','1987-11-22','JB 0861','20250826'); 
 
 -- ✈️ Flight 
 INSERT INTO Flight (Flight) VALUES

@@ -5,14 +5,18 @@ import pandas as pd
 # Connect with type detection enabled
 def get_db_connection():
     conn = sqlite3.connect('travel.database', detect_types=sqlite3.PARSE_DECLTYPES)
-    conn.row_factory = sqlite3.Row
     conn.execute('PRAGMA journal_mode=WAL;')
     return conn
 
 def get_table_data(table_name):
     try:
         with get_db_connection() as conn:
-            df = pd.read_sql_query(f"SELECT * FROM {table_name} ORDER BY {table_name}_id DESC", conn)
+            if table_name in ["Travel"]:
+                df = pd.read_sql_query(f"SELECT * FROM {table_name} ORDER BY {table_name}_id ", conn)
+            else:
+                df = pd.read_sql_query(f"SELECT * FROM {table_name} WHERE status=1 ORDER BY {table_name}_id ", conn)
+                # Reset the index to start from 1
+                df.index = df.index + 1
             return df
     except Exception as e:
         st.error(f"Error fetching data from Table {table_name}: {e}")
