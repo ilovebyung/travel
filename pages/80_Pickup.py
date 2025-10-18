@@ -20,31 +20,39 @@ tab1, tab2, tab3 = st.tabs(["➕ Add New Pickup", "✏️ Edit Pickup", "👀 Di
 
 # --- TAB 1: Input Pickup (Unchanged) ---
 with tab1:
-    st.header("Add New Pickup")
+# Input widgets
     Pickup_name = st.text_input("Pickup Name", key="add_Pickup_name")
     notes = st.text_area("Notes", key="add_notes")
-    status = st.selectbox("Status", [1, 0], format_func=lambda x: "Active" if x == 1 else "Inactive", key="add_status")
+    status = st.selectbox(
+        "Status", [1, 0],
+        format_func=lambda x: "Active" if x == 1 else "Inactive",
+        key="add_status"
+    )
 
+    # Add Pickup button
     if st.button("Add Pickup"):
         if Pickup_name:
             try:
                 with get_db_connection() as conn:
                     cursor = conn.cursor()
-                    cursor.execute("INSERT INTO Pickup (Pickup, Notes, status) VALUES (?, ?, ?)",
-                        (Pickup_name, notes, status))
+                    cursor.execute(
+                        "INSERT INTO Pickup (Pickup, Notes, status) VALUES (?, ?, ?)",
+                        (Pickup_name, notes, status)
+                    )
                     conn.commit()
                     st.success(f"Pickup '{Pickup_name}' added successfully!")
-                    # Clear inputs after success
-                    st.session_state.add_Pickup_name = ""
-                    st.session_state.add_notes = ""
+
+                    # Clear inputs by resetting session state and rerunning
+                    for key in ["add_Pickup_name", "add_notes"]:
+                        if key in st.session_state:
+                            del st.session_state[key]
+                    st.rerun()
+
             except Exception as e:
                 st.error(f"Database connection error: {e}")
 
 # --- TAB 2: Edit Pickup (Using unique keys) ---
 with tab2:
-    st.header("Edit Existing Pickup")
-    Pickups = None
-
     # Fetch Pickup list
     try:
         with get_db_connection() as conn:
@@ -53,46 +61,77 @@ with tab2:
             Pickups = cursor.fetchall()
     except Exception as e:
         st.error(f"Database error when loading Pickups: {e}")
-            
-    if Pickups:
-        selected = st.selectbox("Select Pickup to Edit", Pickups, 
-                                format_func=lambda x: x[1], 
-                                key="Pickup_select")
-        rowid = selected[0]
-        
-        Pickup_data = None
-        # Fetch data for selected Pickup
-        try:
-            with get_db_connection() as conn:
-                cursor = conn.cursor()
-                cursor.execute("SELECT Pickup, Notes, status FROM Pickup WHERE rowid = ?", (rowid,))
-                Pickup_data = cursor.fetchone()
-        except Exception as e:
-            st.error(f"Database error when fetching details: {e}")
-        
-        if Pickup_data:
-            new_name = st.text_input("Pickup Name", value=Pickup_data[0], key="edit_name")
-            new_notes = st.text_area("Notes", value=Pickup_data[1], key="edit_notes")
-            
-            new_status = st.selectbox("Status", [1, 0], 
-                                      index=0 if Pickup_data[2] == 1 else 1,
-                                      format_func=lambda x: "Active" if x == 1 else "Inactive",
-                                      key="edit_status")
+        Pickups = []
 
-            # Update operation
+    if Pickups:
+        selected = st.selectbox(
+            "Select Pickup to Edit",
+            Pickups,
+            format_func=lambda x: x[1],
+            key="Pickup_select"
+        )
+
+        rowid = selected[0]
+
+        # Fetch Pickup details when selection changes
+        if "last_selected" not in st.session_state or st.session_state.last_selected != rowid:
+            try:
+                with get_db_connection() as conn:
+                    cursor = conn.cursor()
+                    cursor.execute("SELECT Pickup, Notes, status FROM Pickup WHERE rowid = ?", (rowid,))
+                    pickup_data = cursor.fetchone()
+                    if pickup_data:
+                        st.session_state.edit_name = pickup_data[0]
+                        st.session_state.edit_notes = pickup_data[1]
+                        st.session_state.edit_status = pickup_data[2]
+                        st.session_state.last_selected = rowid
+            except Exception as e:
+                st.error(f"Database error when fetching details: {e}")
+
+        # Editable fields
+        new_name = st.text_input("Pickup Name", value=st.session_state.get("edit_name", ""), key="edit_name")
+        new_notes = st.text_area("Notes", value=st.session_state.get("edit_notes", ""), key="edit_notes")
+        new_status = st.selectbox(
+            "Status",
+            [1, 0],
+            index=0 if st.session_state.get("edit_status", 1) == 1 else 1,
+            format_func=lambda x: "Active" if x == 1 else "Inactive",
+            key="edit_status"
+        )
+
+        # Create two columns for buttons
+        col1, col2, col3, col4 = st.columns(4)
+
+        with col1:
             if st.button("Update Pickup"):
                 try:
                     with get_db_connection() as conn:
                         cursor = conn.cursor()
-                        cursor.execute("UPDATE Pickup SET Pickup = ?, Notes = ?, status = ? WHERE rowid = ?",
-                                       (new_name, new_notes, new_status, rowid))
+                        cursor.execute(
+                            "UPDATE Pickup SET Pickup = ?, Notes = ?, status = ? WHERE rowid = ?",
+                            (new_name, new_notes, new_status, rowid)
+                        )
                         conn.commit()
                         st.success(f"Pickup '{new_name}' updated successfully!")
-                        # Note: st.rerun() could be used here to refresh the UI
+                        st.session_state.last_selected = None
+                        st.rerun()
                 except Exception as e:
                     st.error(f"Database error during update: {e}")
+
+        with col2:
+            if st.button("Delete Pickup"):
+                try:
+                    with get_db_connection() as conn:
+                        cursor = conn.cursor()
+                        cursor.execute("DELETE FROM Pickup WHERE rowid = ?", (rowid,))
+                        conn.commit()
+                        st.success(f"Pickup '{new_name}' deleted successfully!")
+                        st.session_state.last_selected = None
+                        st.rerun()
+                except Exception as e:
+                    st.error(f"Database error during deletion: {e}")
     else:
-        st.info("No Pickups available to edit.")
+        st.info("No Clients available to edit.")
 
 # --- TAB 3: Display Pickup (NEW) ---
 with tab3:

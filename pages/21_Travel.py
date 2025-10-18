@@ -178,7 +178,7 @@ with st.expander("➕ Add New Travel Entry", expanded=True):
         
         if submit_button:
             # Validation
-            if selected_customer == "":
+            if selected_customer is None or selected_customer == "Select...":
                 st.error("Please fill out a Customer.")
             else:
                 # Format optional datetime fields to ISO 8601

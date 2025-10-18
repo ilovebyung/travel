@@ -13,31 +13,39 @@ tab1, tab2, tab3 = st.tabs(["➕ Add New Flight", "✏️ Edit Flight", "👀 Di
 
 # --- TAB 1: Input Flight (Unchanged) ---
 with tab1:
-    st.header("Add New Flight")
+# Input widgets
     Flight_name = st.text_input("Flight Name", key="add_Flight_name")
     notes = st.text_area("Notes", key="add_notes")
-    status = st.selectbox("Status", [1, 0], format_func=lambda x: "Active" if x == 1 else "Inactive", key="add_status")
+    status = st.selectbox(
+        "Status", [1, 0],
+        format_func=lambda x: "Active" if x == 1 else "Inactive",
+        key="add_status"
+    )
 
+    # Add Flight button
     if st.button("Add Flight"):
         if Flight_name:
             try:
                 with get_db_connection() as conn:
                     cursor = conn.cursor()
-                    cursor.execute("INSERT INTO Flight (Flight, Notes, status) VALUES (?, ?, ?)",
-                        (Flight_name, notes, status))
+                    cursor.execute(
+                        "INSERT INTO Flight (Flight, Notes, status) VALUES (?, ?, ?)",
+                        (Flight_name, notes, status)
+                    )
                     conn.commit()
                     st.success(f"Flight '{Flight_name}' added successfully!")
-                    # Clear inputs after success
-                    st.session_state.add_Flight_name = ""
-                    st.session_state.add_notes = ""
+
+                    # Clear inputs by resetting session state and rerunning
+                    for key in ["add_Flight_name", "add_notes"]:
+                        if key in st.session_state:
+                            del st.session_state[key]
+                    st.rerun()
+
             except Exception as e:
                 st.error(f"Database connection error: {e}")
 
 # --- TAB 2: Edit Flight (Using unique keys) ---
 with tab2:
-    st.header("Edit Existing Flight")
-    Flights = None
-
     # Fetch Flight list
     try:
         with get_db_connection() as conn:
@@ -46,46 +54,77 @@ with tab2:
             Flights = cursor.fetchall()
     except Exception as e:
         st.error(f"Database error when loading Flights: {e}")
-            
-    if Flights:
-        selected = st.selectbox("Select Flight to Edit", Flights, 
-                                format_func=lambda x: x[1], 
-                                key="Flight_select")
-        rowid = selected[0]
-        
-        Flight_data = None
-        # Fetch data for selected Flight
-        try:
-            with get_db_connection() as conn:
-                cursor = conn.cursor()
-                cursor.execute("SELECT Flight, Notes, status FROM Flight WHERE rowid = ?", (rowid,))
-                Flight_data = cursor.fetchone()
-        except Exception as e:
-            st.error(f"Database error when fetching details: {e}")
-        
-        if Flight_data:
-            new_name = st.text_input("Flight Name", value=Flight_data[0], key="edit_name")
-            new_notes = st.text_area("Notes", value=Flight_data[1], key="edit_notes")
-            
-            new_status = st.selectbox("Status", [1, 0], 
-                                      index=0 if Flight_data[2] == 1 else 1,
-                                      format_func=lambda x: "Active" if x == 1 else "Inactive",
-                                      key="edit_status")
+        Flights = []
 
-            # Update operation
+    if Flights:
+        selected = st.selectbox(
+            "Select Flight to Edit",
+            Flights,
+            format_func=lambda x: x[1],
+            key="Flight_select"
+        )
+
+        rowid = selected[0]
+
+        # Fetch Flight details when selection changes
+        if "last_selected" not in st.session_state or st.session_state.last_selected != rowid:
+            try:
+                with get_db_connection() as conn:
+                    cursor = conn.cursor()
+                    cursor.execute("SELECT Flight, Notes, status FROM Flight WHERE rowid = ?", (rowid,))
+                    flight_data = cursor.fetchone()
+                    if flight_data:
+                        st.session_state.edit_name = flight_data[0]
+                        st.session_state.edit_notes = flight_data[1]
+                        st.session_state.edit_status = flight_data[2]
+                        st.session_state.last_selected = rowid
+            except Exception as e:
+                st.error(f"Database error when fetching details: {e}")
+
+        # Editable fields
+        new_name = st.text_input("Flight Name", value=st.session_state.get("edit_name", ""), key="edit_name")
+        new_notes = st.text_area("Notes", value=st.session_state.get("edit_notes", ""), key="edit_notes")
+        new_status = st.selectbox(
+            "Status",
+            [1, 0],
+            index=0 if st.session_state.get("edit_status", 1) == 1 else 1,
+            format_func=lambda x: "Active" if x == 1 else "Inactive",
+            key="edit_status"
+        )
+
+        # Create two columns for buttons
+        col1, col2, col3, col4 = st.columns(4)
+
+        with col1:
             if st.button("Update Flight"):
                 try:
                     with get_db_connection() as conn:
                         cursor = conn.cursor()
-                        cursor.execute("UPDATE Flight SET Flight = ?, Notes = ?, status = ? WHERE rowid = ?",
-                                       (new_name, new_notes, new_status, rowid))
+                        cursor.execute(
+                            "UPDATE Flight SET Flight = ?, Notes = ?, status = ? WHERE rowid = ?",
+                            (new_name, new_notes, new_status, rowid)
+                        )
                         conn.commit()
                         st.success(f"Flight '{new_name}' updated successfully!")
-                        # Note: st.rerun() could be used here to refresh the UI
+                        st.session_state.last_selected = None
+                        st.rerun()
                 except Exception as e:
                     st.error(f"Database error during update: {e}")
+
+        with col2:
+            if st.button("Delete Flight"):
+                try:
+                    with get_db_connection() as conn:
+                        cursor = conn.cursor()
+                        cursor.execute("DELETE FROM Flight WHERE rowid = ?", (rowid,))
+                        conn.commit()
+                        st.success(f"Flight '{new_name}' deleted successfully!")
+                        st.session_state.last_selected = None
+                        st.rerun()
+                except Exception as e:
+                    st.error(f"Database error during deletion: {e}")
     else:
-        st.info("No Flights available to edit.")
+        st.info("No Clients available to edit.")
 
 # --- TAB 3: Display Flight (NEW) ---
 with tab3:
