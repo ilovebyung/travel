@@ -49,13 +49,13 @@ def add_travel_entry(data):
         with get_db_connection() as conn:
             query = """
             INSERT INTO Travel (
-                Product, Vendor, Customer, Flight, Pickup, pickup_time, 
+                Representative, Customer, Product, Vendor, Flight, Pickup, pickup_time, 
                 confirmation_code, airfair_IB, airfair_OB, time_IB, time_OB, 
                 deposite, payment, event_expense, notes
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """
             conn.execute(query, (
-                data['Product'], data['Vendor'], data['Customer'], data['Flight'], data['Pickup'],
+                data['Representative'], data['Customer'], data['Product'], data['Vendor'], data['Flight'], data['Pickup'],
                 data['pickup_time'], data['confirmation_code'], data['airfair_IB'], data['airfair_OB'],
                 data['time_IB'], data['time_OB'], data['deposite'], data['payment'], 
                 data['event_expense'], data['notes']
@@ -195,10 +195,11 @@ with st.expander("➕ Add New Travel Entry", expanded=True):
                     pickup_time_str = datetime.datetime.combine(pickup_date, pickup_time).isoformat(' ', 'seconds')
 
                 travel_data = {
+                    'Representative': selected_representitive, # Full Name string
+                    'Customer': selected_customer, # Full Name string
                     'Product': selected_product if selected_product != "Select..." else None,
                     'Vendor': selected_vendor if selected_vendor != "Select..." else None,
                     'Client': selected_client if selected_client != "Select..." else None,
-                    'Customer': selected_customer, # Full Name string
                     'Flight': selected_flight if selected_flight != "Select..." else None,
                     'Pickup': selected_pickup if selected_pickup != "Select..." else None,
                     'pickup_time': pickup_time_str,

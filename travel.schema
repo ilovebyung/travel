@@ -54,9 +54,10 @@ CREATE TABLE IF NOT EXISTS Pickup (
 -- 🧳 Travel	
 CREATE TABLE IF NOT EXISTS Travel (
     travel_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    Representative TEXT,
+    Client TEXT,
     Product TEXT,
     Vendor TEXT,
-    Client TEXT,
     Customer TEXT,
     Flight TEXT,
     Pickup TEXT,
@@ -128,8 +129,8 @@ INSERT INTO Client (Client) VALUES
 
 -- 👤 Customer 
 INSERT INTO Customer (first_name, middle_name, last_name, hangul_name, sex, date_of_birth, credit_card, credit_card_date) VALUES
-('YOUNG SOOK','','SONG','송영석','M','1962-10-18','JB 0861','20250826'), 
-('DONG GYU','','LEE','이동규','M','1987-11-22','JB 0861','20250826'); 
+('YOUNG SOOK','','SONG','송영석','Male','1962-10-18','JB 0861','20250826'), 
+('DONG GYU','','LEE','이동규','Male','1987-11-22','JB 0861','20250826'); 
 
 -- ✈️ Flight 
 INSERT INTO Flight (Flight) VALUES
