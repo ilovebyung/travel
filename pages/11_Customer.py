@@ -98,7 +98,7 @@ with st.expander("➕ Register New Customer", expanded=True):
             dob = st.date_input("Date of Birth *", min_value=pd.to_datetime('1900-01-01').date())
 
         st.markdown("---")
-        st.subheader("Payment Information ")
+        # st.subheader("Payment Information ")
         col_a, col_b, col_c, col_d, col_e, col_f = st.columns(6)
         with col_a:
             # Store full CC number, but advise user that only last 4 are shown in the display

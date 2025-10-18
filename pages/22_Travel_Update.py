@@ -184,7 +184,7 @@ try:
         # Display summary statistics
         st.divider()
         st.subheader("Summary Statistics")
-        col1, col2, col3, col4 = st.columns(4)
+        col1, col2, col3, col4, col5, col6, col7 = st.columns(7)
         
         with col1:
             st.metric("Total Travel Records", len(df))
@@ -197,16 +197,13 @@ try:
         with col4:
             total_expenses = df['event_expense'].sum()
             st.metric("Total Event Expenses", f"${total_expenses:,.0f}")
-        
-        # Additional financial summary
-        col1, col2, col3 = st.columns(3)
-        with col1:
+        with col5:
             total_airfare_ib = df['airfair_IB'].sum()
             st.metric("Total Inbound Airfare", f"${total_airfare_ib:,.0f}")
-        with col2:
+        with col6:
             total_airfare_ob = df['airfair_OB'].sum()
             st.metric("Total Outbound Airfare", f"${total_airfare_ob:,.0f}")
-        with col3:
+        with col7:
             total_airfare = total_airfare_ib + total_airfare_ob
             st.metric("Total Airfare", f"${total_airfare:,.0f}")
 

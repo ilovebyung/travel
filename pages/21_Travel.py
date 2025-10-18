@@ -109,7 +109,7 @@ pickup_options = get_lookup_data("Pickup")
 with st.expander("➕ Add New Travel Entry", expanded=True):
     with st.form(key='add_travel_form'):
         
-        st.subheader("Booking Details")
+        # st.subheader("Booking Details")
         col0, col1, col2, col3, col4 = st.columns(5)
         with col0:
             selected_representitive = st.selectbox("Representitive *", options=representitive_options)
@@ -123,10 +123,10 @@ with st.expander("➕ Add New Travel Entry", expanded=True):
             selected_vendor = st.selectbox("Vendor", options=vendor_options)
 
         st.markdown("---")
-        st.subheader("Flight & Pickup Details")
+        # st.subheader("Flight & Pickup Details")
         
         # Flight Times
-        st.caption("Flight Times (Optional)")
+        st.caption("Flight Times ")
         col_confirmation, col_flight, col_ib_date, col_ib_time, col_ob_date, col_ob_time = st.columns(6)
 
         with col_confirmation:
@@ -144,7 +144,7 @@ with st.expander("➕ Add New Travel Entry", expanded=True):
         
         # Pickup Details
         st.markdown("---")
-        st.caption("Pickup Details (Optional)")
+        st.caption("Pickup Details ")
         col_pu_select, col_pu_date, col_pu_time, col_notes = st.columns(4)
         with col_pu_select:
             selected_pickup = st.selectbox("Pickup Location", options=pickup_options)
@@ -158,7 +158,7 @@ with st.expander("➕ Add New Travel Entry", expanded=True):
 
 
         st.markdown("---")
-        st.subheader("Financials & Airfare")
+        # st.subheader("Financials & Airfare")
         
         col_fair_ib, col_fair_ob, col_deposite, col_payment, col_expense = st.columns(5)
         with col_fair_ib:
