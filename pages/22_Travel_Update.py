@@ -50,10 +50,10 @@ try:
                 "Pickup",
                 help="Pickup location"
             ),
-            "pickup_time": st.column_config.DatetimeColumn(
+            "pickup_time": st.column_config.TextColumn(
                 "Pickup Time",
                 help="Format: YYYY-MM-DD HH:MM:SS",
-                format="YYYY-MM-DD HH:mm:ss"
+                # format="YYYY-MM-DD HH:mm:ss"
             ),
             "confirmation_code": st.column_config.TextColumn(
                 "Confirmation Code",
@@ -71,15 +71,15 @@ try:
                 default=0,
                 format="$%d"
             ),
-            "time_IB": st.column_config.DatetimeColumn(
+            "time_IB": st.column_config.TextColumn(
                 "Time Inbound",
                 help="Format: YYYY-MM-DD HH:MM:SS",
-                format="YYYY-MM-DD HH:mm:ss"
+                # format="YYYY-MM-DD HH:mm:ss"
             ),
-            "time_OB": st.column_config.DatetimeColumn(
+            "time_OB": st.column_config.TextColumn(
                 "Time Outbound",
                 help="Format: YYYY-MM-DD HH:MM:SS",
-                format="YYYY-MM-DD HH:mm:ss"
+                # format="YYYY-MM-DD HH:mm:ss"
             ),
             "deposite": st.column_config.NumberColumn(
                 "Deposit",
