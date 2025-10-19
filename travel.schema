@@ -73,6 +73,7 @@ CREATE TABLE IF NOT EXISTS Travel (
     Notes TEXT,
     FOREIGN KEY (Product) REFERENCES Product(Product),
     FOREIGN KEY (Vendor) REFERENCES Vendor(Vendor),
+    FOREIGN KEY (Client) REFERENCES Client(Client),
     FOREIGN KEY (Customer) REFERENCES Customer(Customer),
     FOREIGN KEY (Flight) REFERENCES Flight(Flight),
     FOREIGN KEY (Pickup) REFERENCES Pickup(Pickup)

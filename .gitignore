@@ -63,7 +63,7 @@ l10n/
 # development 
 sandbox.py
 sandbox/**
-*.schema
+travel.schema
 *.db 
 *.sqlite
 *.db-shm
