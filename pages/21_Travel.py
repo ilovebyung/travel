@@ -112,15 +112,16 @@ with st.expander("➕ Add New Travel Entry", expanded=True):
         # st.subheader("Booking Details")
         col0, col1, col2, col3, col4 = st.columns(5)
         with col0:
-            selected_representitive = st.selectbox("Representitive *", options=representitive_options)
-        with col1:
-            selected_customer = st.selectbox("Customer *", options=customer_options)               
-        with col2:
-            selected_product = st.selectbox("Product", options=product_options)
-        with col3:
-            selected_client = st.selectbox("Client", options=client_options)
-        with col4:
             selected_vendor = st.selectbox("Vendor", options=vendor_options)
+        with col1:
+            selected_product = st.selectbox("Product", options=product_options)
+        with col2:
+            selected_representitive = st.selectbox("Representitive *", options=representitive_options)
+        with col3:
+            selected_customer = st.selectbox("Customer *", options=customer_options)               
+        with col4:
+            selected_client = st.selectbox("Client", options=client_options)
+
 
         st.markdown("---")
         # st.subheader("Flight & Pickup Details")
