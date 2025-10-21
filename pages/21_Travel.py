@@ -49,17 +49,15 @@ def add_travel_entry(data):
         with get_db_connection() as conn:
             query = """
             INSERT INTO Travel (
-                Vendor, Product, Representative, Customer, Client, Flight, Pickup, 
-                pickup_time, confirmation_code, airfair_IB, airfair_OB, 
-                time_IB, time_OB, deposite, payment, 
-                event_expense, notes
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                Representative, Client, Product, Vendor, Customer, Flight, Pickup, pickup_time, 
+                confirmation_code, airfair_IB, airfair_OB, time_IB, time_OB, 
+                deposite, payment, event_expense, notes
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """
             conn.execute(query, (
-                data['Vendor'], data['Product'], data['Representative'], data['Customer'], data['Client'], data['Flight'], data['Pickup'],
-                data['pickup_time'], data['confirmation_code'], data['airfair_IB'], data['airfair_OB'],
-                data['time_IB'], data['time_OB'], data['deposite'], data['payment'], 
-                data['event_expense'], data['notes']
+                data['Representative'], data['Client'], data['Product'], data['Vendor'], data['Customer'], data['Flight'], data['Pickup'], data['pickup_time'], 
+                data['confirmation_code'], data['airfair_IB'], data['airfair_OB'], data['time_IB'], data['time_OB'], 
+                data['deposite'], data['payment'], data['event_expense'], data['notes']
             ))
             conn.commit()
             st.success(f"New travel entry confirmed with code: **{data['confirmation_code']}**")

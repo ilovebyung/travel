@@ -54,15 +54,16 @@ CREATE TABLE IF NOT EXISTS Pickup (
 -- 🧳 Travel	
 CREATE TABLE IF NOT EXISTS Travel (
     travel_id INTEGER PRIMARY KEY AUTOINCREMENT,
-    Representative TEXT,
-    Client TEXT,
-    Product TEXT,
     Vendor TEXT,
+    Product TEXT,
+    Representative TEXT,
     Customer TEXT,
+    Client TEXT,
+    confirmation_code TEXT,
     Flight TEXT,
     Pickup TEXT,
     pickup_time TEXT,	--ISO 8601 format ('YYYY-MM-DD HH:MM:SS') 
-    confirmation_code TEXT,
+    Notes TEXT,
     airfair_IB INTEGER DEFAULT 0,
     airfair_OB INTEGER DEFAULT 0,
     time_IB TEXT,	--ISO 8601 format ('YYYY-MM-DD HH:MM:SS') 
@@ -70,7 +71,6 @@ CREATE TABLE IF NOT EXISTS Travel (
     deposite INTEGER DEFAULT 0,
     payment INTEGER DEFAULT 0,
     event_expense INTEGER DEFAULT 0,
-    Notes TEXT,
     FOREIGN KEY (Product) REFERENCES Product(Product),
     FOREIGN KEY (Vendor) REFERENCES Vendor(Vendor),
     FOREIGN KEY (Client) REFERENCES Client(Client),
@@ -129,9 +129,10 @@ INSERT INTO Client (Client) VALUES
 ('I4U');
 
 -- 👤 Customer 
-INSERT INTO Customer (first_name, middle_name, last_name, hangul_name, sex, date_of_birth, credit_card, credit_card_date) VALUES
-('YOUNG SOOK','','SONG','송영석','Male','1962-10-18','JB 0861','20250826'), 
-('DONG GYU','','LEE','이동규','Male','1987-11-22','JB 0861','20250826'); 
+INSERT INTO Customer (first_name, middle_name, last_name, hangul_name, sex, date_of_birth, credit_card, credit_card_date, is_representative) VALUES
+('YOUNG SOOK','','SONG','송영석','Male','1962-10-18','JB 0861','20250826',0), 
+('DONG GYU','','LEE','이동규','Male','1987-11-22','JB 0861','20250826',0), 
+('DUCK SOO','','KIM','김덕수','Male','1967-11-22','JB 0861','20250826',1); 
 
 -- ✈️ Flight 
 INSERT INTO Flight (Flight) VALUES
