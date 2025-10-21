@@ -117,8 +117,9 @@ try:
             )
         
         with col2:
-            st.write("")  # Spacing
-            st.write("")  # Spacing
+            # Show details of selected customer record
+            selected_row = df[df['customer_id'] == selected_id].iloc[0]
+            st.write(f"**Customer:** {selected_row['first_name']}  {selected_row['last_name']}")
             if st.button("🗑️ Delete Customer", type="secondary"):
                 try:
                     delete_row("Customer", "customer_id", selected_id)

@@ -171,7 +171,7 @@ try:
         with col2:
             # Show details of selected travel record
             selected_row = df[df['travel_id'] == selected_id].iloc[0]
-            st.write(f"**Product:** {selected_row['Product']} | **Customer:** {selected_row['Customer']} | **Vendor:** {selected_row['Vendor']}")
+            st.write(f"**Vendor:** {selected_row['Vendor']} | **Product:** {selected_row['Product']} | **Customer:** {selected_row['Customer']}")
             
             if st.button("🗑️ Delete Travel Record", type="secondary"):
                 try:
